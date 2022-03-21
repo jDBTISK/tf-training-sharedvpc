@@ -1,0 +1,39 @@
+{
+  "name": "tf-sharedvpc",
+  "dockerComposeFile": ["compose.yml"],
+  "service": "app",
+  "remoteUser": "developer",
+  "workspaceFolder": "/home/developer/workspace",
+  "settings": {
+    "terraform.codelens.referenceCount": true,
+    "[terraform]": {
+      "editor.defaultFormatter": "hashicorp.terraform",
+      "editor.formatOnSave": true,
+      "editor.formatOnSaveMode": "file"
+    },
+    "[terraform-vars]": {
+      "editor.defaultFormatter": "hashicorp.terraform",
+      "editor.formatOnSave": true,
+      "editor.formatOnSaveMode": "file"
+    }
+  },
+  "extensions": [
+    "sohamkamani.code-eol",
+    "ms-azuretools.vscode-docker",
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens",
+    "oderwat.indent-rainbow",
+    "ionutvmi.path-autocomplete",
+    "gruntfuggly.todo-tree",
+    "shardulm94.trailing-spaces",
+    "mark-tucker.aws-cli-configure",
+    "amazonwebservices.aws-toolkit-vscode",
+    "hashicorp.terraform",
+    "tfsec.tfsec",
+    "yzhang.markdown-all-in-one",
+    "shd101wyy.markdown-preview-enhanced",
+    "davidanson.vscode-markdownlint",
+    "emilast.LogFileHighlighter",
+    "mikestead.dotenv"
+  ]
+}

@@ -1,0 +1,83 @@
+default:
+  image:
+    name: hashicorp/terraform:${TF_VERSION}
+    entrypoint: [""]
+
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - src/.terraform/
+
+  before_script:
+    - cd src
+
+stages:
+  - init
+  - lint
+  - plan
+  - tfsec
+  - apply
+
+clean-cache:
+  stage: init
+  script:
+    - rm -rf .terraform
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - src/.terraform.locl.hcl
+        - .gitlab-ci.yml
+  allow_failure: true
+
+init:
+  stage: init
+  script:
+    - terraform init -backend-config "bucket=${BACKEND_S3_BUCKET}" -backend-config "role_arn=${ASSUME_ROLE_ARN}"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - src/**/*
+        - .gitlab-ci.yml
+
+lint:
+  stage: lint
+  script:
+    - terraform fmt -check -recursive
+    - terraform validate
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - src/**/*
+        - .gitlab-ci.yml
+
+tfsec:
+  stage: tfsec
+  image:
+    name: tfsec/tfsec:latest
+    entrypoint: [""]
+  script:
+    - tfsec .
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - src/**/*
+        - .gitlab-ci.yml
+
+plan:
+  stage: plan
+  script:
+    - terraform plan -var "assume_role_arn=${ASSUME_ROLE_ARN}"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - src/**/*
+        - .gitlab-ci.yml
+
+apply:
+  stage: apply
+  script:
+    - terraform apply -auto-approve -var "assume_role_arn=${ASSUME_ROLE_ARN}"
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
+      changes:
+        - src/**/*
