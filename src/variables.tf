@@ -22,13 +22,6 @@ locals {
   name_tag_prefix = "${local.project_name}-${local.app_name}"
 
   region = "ap-northeast-1"
-
-  az_suffix = [
-    "a", "c", "d",
-  ]
-  az = [
-    "${local.region}${local.az_suffix[0]}",
-    "${local.region}${local.az_suffix[1]}",
-    "${local.region}${local.az_suffix[2]}",
-  ]
 }
+
+data "aws_availability_zones" "all" {}
