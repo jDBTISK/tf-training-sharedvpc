@@ -29,7 +29,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ secrets.BACKEND_ASSUME_ROLE_ARN }}
-          role-session-name: github-actions-terraform-plan-session
+          role-session-name: github-actions-terraform-drift-session
           aws-region: ap-northeast-1
 
       - name: Setup Terraform
@@ -41,7 +41,7 @@ jobs:
         run: terraform init -backend-config "bucket=${{ secrets.BACKEND_S3_BUCKET }}"
 
       - name: Terraform Plan
-        run: terraform plan -var "assume_role_arn=${{ secrets.ASSUME_ROLE_ARN }} -detailed-exitcode"
+        run: terraform plan -var "assume_role_arn=${{ secrets.ASSUME_ROLE_ARN }}" -detailed-exitcode
 
       - name: Nothing Drift
         if: ${{ success() }}
