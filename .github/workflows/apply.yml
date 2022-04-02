@@ -14,12 +14,16 @@ permissions:
 
 env:
   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+  SLACK_USERNAME: github
   SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
 
 jobs:
   apply:
     name: Apply
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
 
     steps:
       - name: Checkout

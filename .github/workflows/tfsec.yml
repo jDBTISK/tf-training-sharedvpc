@@ -8,10 +8,18 @@ on:
       - "*.tf"
       - ".github/workflows/tfsec.yml"
 
+env:
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+  SLACK_USERNAME: github
+  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+
 jobs:
   tfsec:
     name: TFSec
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
 
     steps:
       - name: Checkout
@@ -23,3 +31,17 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
           filter_mode: nofilter
+
+      - name: Success TFSec Job
+        if: ${{ success() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: Success TFSec Job
+          SLACK_COLOR: good
+
+      - name: Failure TFSec Job
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: Failure TFSec Job
+          SLACK_COLOR: danger
