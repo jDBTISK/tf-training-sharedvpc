@@ -24,4 +24,9 @@ locals {
   region = "ap-northeast-1"
 }
 
-data "aws_availability_zones" "all" {}
+data "aws_availability_zones" "all" {
+  filter {
+    name   = "region-name"
+    values = [local.region]
+  }
+}
