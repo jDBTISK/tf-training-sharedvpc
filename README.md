@@ -95,6 +95,8 @@ github acitons を使用
 | SLACK_WEBHOOK_URL       | workflow 終了時の通知用                                         |
 | SLACK_CHANNEL           | workflow 終了時の通知用                                         |
 
+`BACKEND_ASSUME_ROLE_ARN` から `ASSUME_ROLE_ARN` にスイッチする形になっているので注意
+
 #### main への pull_request 時
 
 - tfsec
