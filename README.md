@@ -74,7 +74,36 @@ tfsec .
 terraform fmt      # フォーマット
 terraform validate # 静的構文チェック
 tflint             # プロバイダ毎の不正値まで検査してくれる静的構文チェック
-tfsec .            # セキュリティの静的構文チェック
+tfsec              # セキュリティの静的構文チェック
 terraform plan     # dry run
 terraform apply    # リソース作成/更新
 terraform destroy  # 全リソース削除
+```
+
+### CI/CD
+
+github acitons を使用
+
+以下の secrets の登録が必要です
+
+| name                    | description                                                     |
+| ----------------------- | --------------------------------------------------------------- |
+| TF_VERSION              | workflow で実行する terraform のバージョン                      |
+| BACKEND_ASSUME_ROLE_ARN | backend に指定している S3 へのアクセス時に使用する IAM Role ARN |
+| BACKEND_S3_BUCKET       | backend に指定している S3 バケット名                            |
+| ASSUME_ROLE_ARN         | terraform 実行時に使用する IAM Role ARN                         |
+| SLACK_WEBHOOK_URL       | workflow 終了時の通知用                                         |
+| SLACK_CHANNEL           | workflow 終了時の通知用                                         |
+
+#### main への pull_request 時
+
+- tfsec
+- terraform plan
+
+が走ります
+
+#### main push 時
+
+- terraform apply
+
+が走ります

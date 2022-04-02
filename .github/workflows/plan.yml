@@ -1,0 +1,65 @@
+name: plan
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "*.tf"
+      - ".github/workflows/plan.yml"
+      - ".tflint.hcl"
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: read
+
+env:
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+
+jobs:
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.BACKEND_ASSUME_ROLE_ARN }}
+          role-session-name: github-actions-terraform-plan-session
+          aws-region: ap-northeast-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ TF_VERSION }}
+
+      - name: Terraform Fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init -backend-config "bucket=${{ secrets.BACKEND_S3_BUCKET }}"
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -var "assume_role_arn=${{ secrets.ASSUME_ROLE_ARN }}"
+
+      - name: Success Plan Job
+        if: ${{ success() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: Success Plan Job
+          SLACK_COLOR: good
+
+      - name: Failure Plan Job
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: Failure Plan Job
+          SLACK_COLOR: danger
