@@ -16,7 +16,7 @@ RUN RELEASES_URL=https://api.github.com/repos/hashicorp/terraform/releases/lates
     if [ "${TF_VERSION}" = "latest" ]; then \
     TF_VERSION=$(curl ${RELEASES_URL} | jq --raw-output '.tag_name' | cut -c 2-); fi && \
     if [ "${ARCH}" = "arm64" ]; then TF_ARCH=${ARCH}; else TF_ARCH=amd64; fi && \
-    ZIP_NAME=terraform_${TF_VERSION}_linux_${ARCH}.zip && \
+    ZIP_NAME=terraform_${TF_VERSION}_linux_${TF_ARCH}.zip && \
     # terraform install
     wget https://releases.hashicorp.com/terraform/${TF_VERSION}/${ZIP_NAME} && \
     unzip ${ZIP_NAME} -d /usr/local/bin && \
@@ -39,10 +39,7 @@ ARG UID=1000
 ARG GID=1000
 
 RUN groupadd -g ${GID} ${GROUPNAME} && \
-    useradd -m -u ${UID} -g ${USERNAME} -s /bin/bash ${USERNAME}
-
-RUN mkdir -p /workspace && \
-    chown -R ${USERNAME}:${GROUPNAME} /workspace
+    useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USERNAME}
 
 USER ${USERNAME}
 
