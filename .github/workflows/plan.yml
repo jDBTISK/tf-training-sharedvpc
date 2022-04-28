@@ -7,7 +7,6 @@ on:
     paths:
       - "*.tf"
       - ".github/workflows/plan.yml"
-      - ".tflint.hcl"
 
 permissions:
   id-token: write
